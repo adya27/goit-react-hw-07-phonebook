@@ -20,10 +20,8 @@ function Filter({ dispatchFilter }) {
   );
 }
 
-const mapStateToProps = (state) => state;
-
 const mapDispatchToProps = (dispatch) => ({
   dispatchFilter: (query) => dispatch(filterContact(query)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Filter);
+export default connect(null, mapDispatchToProps)(Filter);

@@ -1,10 +1,15 @@
 import { connect } from "react-redux";
-import store from "../../redux/store";
+import { getVisibleContacts } from "../../redux/selectors";
+import { useEffect } from "react";
 
-import * as actions from "../../redux/actions";
+import { deleteContact, fetchContact } from "../../redux/operations";
 import Contact from "./Contact";
 
-function ContactList({ contacts, onDeleteBtnClick }) {
+function ContactList({ contacts, onDeleteBtnClick, fetchFirst }) {
+  useEffect(() => {
+    fetchFirst();
+  }, []);
+
   return (
     <div>
       <h2>Contacts</h2>
@@ -26,13 +31,12 @@ function ContactList({ contacts, onDeleteBtnClick }) {
 }
 
 const mapStateToProps = (state) => ({
-  contacts: state.contacts.filter((contact) =>
-    contact.name.toLowerCase().includes(state.filter)
-  ),
+  contacts: getVisibleContacts(state),
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  onDeleteBtnClick: (id) => dispatch(actions.deleteContact(id)),
+  fetchFirst: () => dispatch(fetchContact()),
+  onDeleteBtnClick: (id) => dispatch(deleteContact(id)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ContactList);

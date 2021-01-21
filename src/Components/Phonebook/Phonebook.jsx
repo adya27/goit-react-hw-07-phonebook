@@ -3,30 +3,21 @@ import styles from "./Phonebook.module.css";
 import { connect } from "react-redux";
 import { v4 as uuidv4 } from "uuid";
 
-import { store } from "../../redux/store";
+import { addContact } from "../../redux/operations";
+import { getContacts, getLoading } from "../../redux/selectors";
 
-import * as actions from "../../redux/actions";
-
-function Phonebook({ handleSubmit }) {
+function Phonebook({ handleSubmit, loading, contacts }) {
   const [name, setName] = useState("");
   const [number, setNumber] = useState("");
 
   const handleAddName = (e) => {
     const { value } = e.currentTarget;
-
-    // this.setState({ [name]: value });
     setName(value);
-
-    // console.log(this.state);
   };
 
   const handleAddNumber = (e) => {
     const { value } = e.currentTarget;
-
-    // this.setState({ [name]: value });
-
     setNumber(value);
-    // console.log(this.state);
   };
 
   const reset = () => {
@@ -34,20 +25,9 @@ function Phonebook({ handleSubmit }) {
     setNumber("");
   };
 
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   props.onSubmit({ name, number });
-  //   reset();
-  // };
-
   const onSubmit = (e) => {
     e.preventDefault();
-    if (
-      store
-        .getState()
-        .contacts.map((contact) => contact.name)
-        .includes(name)
-    ) {
+    if (contacts.map((contact) => contact.name).includes(name)) {
       alert(`${name} is already exists in contacts`);
       return;
     }
@@ -57,7 +37,7 @@ function Phonebook({ handleSubmit }) {
 
   return (
     <div>
-      <h2>Phonebook</h2>
+      <h2>Phonebook {loading && <span>loading...</span>}</h2>
       <form className={styles.form} onSubmit={onSubmit}>
         <label className={styles.label}>
           Name
@@ -86,10 +66,13 @@ function Phonebook({ handleSubmit }) {
     </div>
   );
 }
-const mapStateToProps = (state) => state;
+const mapStateToProps = (state) => ({
+  loading: getLoading(state),
+  contacts: getContacts(state),
+});
 
 const mapDispatchToProps = (dispatch) => ({
-  handleSubmit: (contact) => dispatch(actions.addContact(contact)),
+  handleSubmit: (contact) => dispatch(addContact(contact)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Phonebook);
